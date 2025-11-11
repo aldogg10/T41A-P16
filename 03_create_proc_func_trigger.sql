@@ -36,3 +36,22 @@ FOR EACH ROW
 EXECUTE PROCEDURE registrar_auditoria_stock();
 
 CALL registrar_movimiento(1, 'salida', 20);
+
+CREATE OR REPLACE FUNCTION calcular_valor_inventario()
+RETURNS NUMERIC (12,2) 
+LANGUAGE plpgsql 
+AS $$ 
+DECLARE
+    total NUMERIC(12,2);
+BEGIN
+    SELECT SUM(stock * precio_unitario) INTO total FROM productos;
+    
+    IF total IS NULL THEN
+        RETURN 0;
+    ELSE
+        RETURN total;
+    END IF; 
+END;
+$$;
+
+SELECT calcular_valor_inventario();
